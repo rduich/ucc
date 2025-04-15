@@ -1,3 +1,5 @@
+<p align="center"><strong><span style="color:red; font-size:20px;">⚠️ DISCLAIMER: This project is a concept and not yet fully tested. Use at your own risk!</span></strong></p>
+
 # ☕ UCC – Universal Coffee Controller
 
 **The UCC (Universal Coffee Controller)** is a customizable, feature-packed temperature control system based on the Raspberry Pi Pico. It’s designed for use in coffee machines, DIY espresso setups, steaming, or any application requiring smart and safe temperature control.
@@ -72,15 +74,7 @@
 - Max temperature difference when using dual probes
 - Persistent configuration with validation
 
-## 📝 License
+## 🔐 License
 
-MIT License
-
-```
-MIT License
-
-Copyright (c) [year] [Your Name]
-
-Permission is hereby granted, free of charge, to any person obtaining a copy...
-[Full MIT License text here]
-```
+This project is licensed under the **MIT License**.  
+See the [LICENSE](LICENSE) file for full details.
