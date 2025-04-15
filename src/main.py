@@ -254,11 +254,18 @@ def run_autotune():
     pid.Kp, pid.Ki, pid.Kd = new_kp, new_ki, new_kd
 
 # ====== MAIN LOOP ======
+temp_samples = [(time.time(), read_temp())]
+temp_stable = False
+last_temp_time = time.time()
+
 def beep():
     if config.get("use_buzzer", True):
         BUZZER.on()
         time.sleep(0.1)
         BUZZER.off()
+
+# Safety: disable if temp rises too fast (>10°C/min) during stable phase
+# Temp samples are collected in the loop to evaluate stability and rate of change
 
 def handle_quick_buttons():
     global button1_pressed_time, button2_pressed_time, target_temp
@@ -291,9 +298,27 @@ def handle_quick_buttons():
         button2_pressed_time = 0
 
 while True:
+    global last_temp, last_temp_time
     handle_quick_buttons()
     handle_encoder()
     temp = read_temp()
+    now = time.time()
+    temp_samples.append((now, temp))
+    temp_samples = [t for t in temp_samples if now - t[0] <= 60]
+
+    if len(temp_samples) >= 2:
+        t1, v1 = temp_samples[0]
+        t2, v2 = temp_samples[-1]
+        rate = abs(v2 - v1) / (t2 - t1 + 0.001)
+        temp_stable = rate < (5 / 60.0)  # stable if <5°C/min
+
+    if heater_enabled and temp_stable is False and len(temp_samples) >= 2:
+        # Check if temperature rising too fast while system is supposed to be stable
+        t1, v1 = temp_samples[-2]
+        t2, v2 = temp_samples[-1]
+        short_rate = abs(v2 - v1) / (t2 - t1 + 0.001)
+        if short_rate > (10 / 60.0):  # 10°C/min max rate
+            disable_heater()
 
     if heater_enabled and temp < config["min_temp"]:
         disable_heater()

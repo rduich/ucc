@@ -73,6 +73,7 @@
 - Auto disable on timeout
 - Max temperature difference when using dual probes
 - Persistent configuration with validation
+- If temperature change is too fast heater is disabled
 
 ## 🔐 License
 
